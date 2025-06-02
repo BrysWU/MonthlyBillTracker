@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <title>Monthly Bill Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Star Background -->
   <link rel="stylesheet" href="stars.css">
   <style>
     :root {
@@ -31,16 +33,17 @@
       color: #222;
       min-height: 100vh;
       padding: 0 0 4em 0;
-      overflow-x: hidden;
       transition: background var(--transition), color var(--transition);
+      overflow-x: hidden;
     }
     body.dark {
       background: var(--dark-bg);
       color: var(--dark-text);
     }
     .wrapper {
-      position: fixed; width: 100vw; height: 100vh; left: 0; top: 0; z-index: -1;
-      overflow: hidden;
+      position: fixed;
+      width: 100vw; height: 100vh; left: 0; top: 0;
+      z-index: -1; overflow: hidden;
     }
     h1, h2 {
       text-align: center;
@@ -62,7 +65,7 @@
     body.dark .subtitle { color: #bcbcf7; }
     h2 { font-size: 1.3rem; }
     main {
-      max-width: 75vw;
+      max-width: 1200px;
       margin: 2em auto 0 auto;
       padding: 2.5em 1.5em 1.5em 1.5em;
       background: #fff;
@@ -79,29 +82,80 @@
       background: var(--dark-card);
       box-shadow: 0 6px 40px #0004;
     }
+
+    /* Top-right controls */
+    .top-controls {
+      position: fixed;
+      top: 1.5em;
+      right: 2em;
+      z-index: 10;
+      display: flex;
+      gap: 1em;
+    }
+
+    /* Dark Mode Button */
     .dark-toggle-btn {
-      position: absolute;
-      bottom: 1.2em;
-      right: 2.5em;
-      z-index: 100;
       background: var(--primary);
       color: #fff;
       border: none;
-      border-radius: 999px;
-      padding: 0.4em 1.2em 0.4em 1em;
-      font-size: 1.05em;
-      font-family: inherit;
-      font-weight: 600;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25em;
       cursor: pointer;
       box-shadow: 0 2px 10px #2563eb18;
       transition: background var(--transition), color var(--transition), box-shadow var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 0.5em;
     }
-    .dark-toggle-btn svg { height: 1.2em; width: 1.2em; vertical-align: middle; transition: transform 0.3s; }
-    .dark-toggle-btn.active { background: #222; color: #99b7ff; }
-    body.dark .dark-toggle-btn { background: #222; color: #99b7ff; box-shadow: 0 2px 10px #0004;}
+    .dark-toggle-btn.active {
+      background: #222;
+      color: #99b7ff;
+    }
+    body.dark .dark-toggle-btn {
+      background: #222;
+      color: #99b7ff;
+      box-shadow: 0 2px 10px #0004;
+    }
+    .dark-toggle-btn svg {
+      width: 1.2em; height: 1.2em;
+    }
+    .logout-btn {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.7em 1.6em;
+      font-size: 1em;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #ef444422;
+      transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+      margin-left: 0.7em;
+      margin-right: 0.1em;
+      margin-top: 0;
+    }
+    .logout-btn:hover {
+      background: var(--danger-hover);
+      color: #fff;
+    }
+
+    .auth-status-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 1em;
+      margin: 1em;
+      margin-right: 2.8em;
+      font-size: 1.05em;
+      transition: color var(--transition);
+    }
+    .auth-status-bar span { font-weight: 600; color: var(--primary);}
+    body.dark .auth-status-bar span { color: #99b7ff; }
+
+    /* Auth section (login/signup) */
     .auth-section {
       max-width: 350px;
       margin: 2em auto 2em auto;
@@ -125,82 +179,167 @@
     .auth-section input[type="text"]:focus, .auth-section input[type="password"]:focus {
       border: 1.5px solid var(--primary);
     }
-    .auth-section .button { width: 100%; margin-bottom: 0.8em; }
-    .auth-status-bar {
-      display: flex; justify-content: flex-end; align-items: center; gap: 1em;
-      margin: 1em; font-size: 1.05em; transition: color var(--transition);
+    .auth-section .button {
+      width: 100%; margin-bottom: 0.8em;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 0.7em 1.2em;
+      font-size: 1.06em;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #2563eb18;
+      transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+      margin-top: 0.3em;
     }
-    .auth-status-bar span { font-weight: 600; color: var(--primary); }
-    body.dark .auth-status-bar span { color: #99b7ff; }
-    #backendStatusBar { animation: fade-in 1.3s; }
-    .table-wrapper {
-      overflow-x: auto;
+    .auth-section .button.secondary {
       background: #fff;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      box-shadow: none;
+      margin-top: 0;
+    }
+    .auth-section .button:hover { background: var(--primary-hover); color: #fff;}
+    .auth-section .button.secondary:hover { background: var(--primary); color: #fff;}
+    .auth-section .error-msg {
+      color: var(--danger);
+      margin-top: 0.7em;
+      font-weight: 600;
+      min-height: 1.5em;
+      text-align: center;
+    }
+
+    /* Bills layout */
+    .bill-lists-container {
+      display: flex;
+      flex-direction: row;
+      gap: 2.5em;
+      justify-content: center;
+      align-items: flex-start;
+      margin: 2em 0 1em 0;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+    .bill-list {
+      flex: 1 1 400px;
+      min-width: 340px;
+      max-width: 520px;
+      background: #f8fafc;
       border-radius: var(--radius);
       box-shadow: 0 2px 8px #0001;
-      margin-top: 1.5em;
+      padding: 1.1em 1em 1.5em 1em;
       transition: background var(--transition), box-shadow var(--transition);
       animation: fade-in 1.1s;
+      margin-bottom: 0.7em;
     }
-    body.dark .table-wrapper { background: var(--dark-card); box-shadow: 0 4px 24px #0003; }
-    table { width: 100%; border-collapse: collapse; min-width: 700px; font-size: 1rem; background: #fff; border-radius: var(--radius); overflow: hidden; transition: background var(--transition); }
-    body.dark table { background: var(--dark-card);}
-    th, td {
-      padding: 0.8em 0.8em;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-      transition: background var(--transition), color var(--transition), border var(--transition);
+    body.dark .bill-list {
+      background: var(--dark-card);
+      box-shadow: 0 4px 18px #0003;
     }
-    body.dark th, body.dark td { border-bottom: 1px solid var(--dark-border); color: var(--dark-text);}
-    th { background: #f1f5f9; color: #222; font-weight: 600; letter-spacing: 0.01em; border-bottom: 2px solid var(--border); transition: background var(--transition), color var(--transition), border var(--transition);}
-    body.dark th { background: var(--dark-secondary); color: #99b7ff; border-bottom: 2px solid var(--dark-border);}
-    td { color: #444; font-size: 0.99rem; vertical-align: middle; transition: color var(--transition);}
-    body.dark td { color: #d5e4ff;}
-    tr:last-child td { border-bottom: none;}
-    .action-btn {
-      padding: 0.38em 1.2em;
-      font-size: 1rem;
-      border-radius: 5px;
-      margin-right: 0.1em;
-      margin-bottom: 0.1em;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.17s;
-      animation: pop-btn 0.55s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .action-btn:active { transform: scale(0.96);}
-    @keyframes pop-btn { 0% { opacity: 0; transform: scale(0.8);} 100% { opacity: 1; transform: scale(1);}}
-    .empty-row td {
-      text-align: center; color: #888; font-style: italic; background: #f9fafb; transition: background var(--transition), color var(--transition);
-    }
-    body.dark .empty-row td { background: var(--dark-secondary); color: #999fc8;}
-    .chip {
-      display: inline-block;
-      padding: 0.21em 0.8em;
-      border-radius: 12px;
-      background: #f0f8ff;
+    .bill-list h2 {
+      margin: 0.7em 0 1.1em 0;
+      font-size: 1.12em;
+      text-align: center;
       color: var(--primary);
-      font-size: 0.98em;
-      margin-right: 0.2em;
-      margin-bottom: 0.2em;
-      font-weight: 500;
-      border: 1px solid var(--primary);
-      transition: background var(--transition), color var(--transition), border var(--transition);
-      animation: chip-pop 0.5s;
+      letter-spacing: -0.5px;
+      font-weight: 700;
     }
-    @keyframes chip-pop { from { opacity: 0; transform: scale(0.7);} to   { opacity: 1; transform: scale(1);}}
-    body.dark .chip { background: var(--dark-chip); color: #89b8ff; border: 1px solid #99b7ff;}
-    .chip-red { background: #fbeaea; color: var(--danger); border: 1px solid var(--danger); transition: background var(--transition), color var(--transition), border var(--transition);}
-    body.dark .chip-red { background: #3a2636; color: #ffb0b0; border: 1px solid #ffb0b0;}
+    body.dark .bill-list h2 { color: #99b7ff; }
+
+    /* Add Bill Button */
     .add-bill-btn {
-      margin: 2em auto 1em auto; display: block; background: var(--primary); color: #fff; font-size: 1.3em;
-      border-radius: 50%; width: 54px; height: 54px; border: none; box-shadow: 0 3px 10px #2563eb2a; cursor: pointer;
+      margin: 0 auto 1em auto;
+      display: block;
+      background: var(--primary);
+      color: #fff;
+      font-size: 2em;
+      border-radius: 50%;
+      width: 52px;
+      height: 52px;
+      border: none;
+      box-shadow: 0 3px 10px #2563eb2a;
+      cursor: pointer;
       transition: background var(--transition), transform var(--transition);
     }
     .add-bill-btn:hover { background: var(--primary-hover); transform: scale(1.08);}
+
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+      background: transparent;
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: background var(--transition);
+    }
+    th, td {
+      padding: 0.7em 0.8em;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      transition: background var(--transition), color var(--transition), border var(--transition);
+      font-size: 1em;
+    }
+    body.dark th, body.dark td { border-bottom: 1px solid var(--dark-border); color: var(--dark-text);}
+    th {
+      background: #f1f5f9;
+      color: #222;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      border-bottom: 2px solid var(--border);
+    }
+    body.dark th {
+      background: var(--dark-secondary);
+      color: #99b7ff;
+      border-bottom: 2px solid var(--dark-border);
+    }
+    td { color: #444; vertical-align: middle;}
+    body.dark td { color: #d5e4ff;}
+    tr:last-child td { border-bottom: none;}
+    .empty-row td {
+      text-align: center; color: #888; font-style: italic; background: #f9fafb;
+    }
+    body.dark .empty-row td { background: var(--dark-secondary); color: #999fc8;}
+
+    /* Action Buttons */
+    .action-btn {
+      padding: 0.38em 1.2em;
+      font-size: 1em;
+      border-radius: 5px;
+      margin-right: 0.15em;
+      margin-bottom: 0.1em;
+      cursor: pointer;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      box-shadow: 0 2px 8px #2563eb12;
+      transition: background 0.18s, transform 0.15s;
+    }
+    .action-btn:active { transform: scale(0.97);}
+    .action-btn.secondary {
+      background: #fff;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      box-shadow: none;
+    }
+    .action-btn.danger {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+    }
+    .action-btn:hover { background: var(--primary-hover);}
+    .action-btn.danger:hover { background: var(--danger-hover);}
+    .action-btn.secondary:hover { background: var(--primary); color: #fff;}
+
     /* Popup Styles */
     .popup {
-      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.63); z-index: 99; justify-content: center; align-items: center;
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.63); z-index: 99;
+      justify-content: center; align-items: center;
     }
     .popup-content {
       background: #fff; border-radius: var(--radius); max-width: 350px; width: 96vw; padding: 2em 1.2em 1.4em 1.2em;
@@ -212,13 +351,21 @@
       width: 94%; margin-bottom: 1.1em; padding: 0.7em 1em; border-radius: 7px; border: 1.5px solid var(--border); font-size: 1em;
     }
     body.dark .popup-content input { background: var(--dark-card); border: 1.5px solid var(--dark-border); color: var(--dark-text);}
-    .popup-content .button { width: 100%; }
+    .popup-content .button { width: 100%; margin-top: 1em;}
     .popup-content .close-popup { position: absolute; right: 1.1em; top: 1.1em; background: none; border: none; font-size: 1.3em; color: #888; cursor: pointer;}
     .popup-content .close-popup:hover { color: #e03f3f;}
     /* Responsive */
-    @media (max-width: 900px) { main { max-width: 98vw; } table { min-width: 0;}}
-    @media (max-width: 700px) { main { padding: 1em 0.1em 1em 0.1em; } .table-wrapper { min-width: 0; } table { min-width: 0; font-size: 0.98em; } th, td { padding: 0.7em 0.5em; } .auth-section { max-width: 100%; } .auth-status-bar { flex-direction: column; gap: 0.3em; align-items: flex-start;} .dark-toggle-btn { right: 1em; top: 0.5em; }}
-    @media (max-width: 430px) { .form-actions { flex-direction: column; gap: 0.6em; }}
+    @media (max-width: 1100px) {
+      .bill-lists-container { flex-direction: column; align-items: stretch; gap: 1.6em;}
+      .bill-list { min-width: 0; max-width: 100%; }
+    }
+    @media (max-width: 700px) {
+      main { padding: 1em 0.1em 1em 0.1em; }
+      .auth-section { max-width: 100%; }
+      .bill-lists-container { flex-direction: column; gap: 0.9em;}
+      .bill-list { min-width: 0; }
+      th, td { padding: 0.7em 0.5em; font-size: 0.97em; }
+    }
   </style>
 </head>
 <body>
@@ -228,30 +375,29 @@
     <div id="stars2"></div>
     <div id="stars3"></div>
   </section>
-  <button class="dark-toggle-btn" id="darkToggle" aria-label="Toggle dark mode" title="Toggle dark mode" style="top:1em;right:1em;">
-    <svg id="sunIcon" style="display:inline;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="5"/><g stroke-width="2"><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></g></svg>
-    <svg id="moonIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
-    <span id="darkToggleText">Dark Mode</span>
-  </button>
+
+  <!-- Top-Right Controls -->
+  <div class="top-controls" id="topControls" style="display: flex;">
+    <button class="dark-toggle-btn" id="darkToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <svg id="sunIcon" style="display:inline;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="5"/><g stroke-width="2"><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></g></svg>
+      <svg id="moonIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
+    </button>
+    <button class="logout-btn" id="logoutBtn" style="display:none;">Logout</button>
+  </div>
+
   <div id="authStatusBar" class="auth-status-bar" style="display:none;">
     <span id="authWelcome"></span>
-    <button class="button secondary" id="logoutBtn">Logout</button>
   </div>
   <h1>Monthly Bill Tracker</h1>
   <div class="subtitle">Track your recurring bills, with rollover and cross-device access.</div>
-  <div id="backendStatusBar" style="display:flex;justify-content:center;align-items:center;margin-top:2em;">
-    <span id="backendStatusIcon" style="font-size:1.5em;vertical-align:middle;">🔄</span>
-    <span id="backendStatusMsg" style="margin-left:0.8em;font-size:1.1em;color:#2563eb;">
-      Checking backend status...
-    </span>
-  </div>
+
   <div id="authSection" class="auth-section" style="display:none;">
     <h2 id="authTitle">Login</h2>
     <input type="text" id="authUsername" placeholder="Username" autocomplete="username">
     <input type="password" id="authPassword" placeholder="Password" autocomplete="current-password">
     <button class="button" id="loginBtn">Login</button>
     <button class="button secondary" id="switchToSignupBtn">Create Account</button>
-    <div style="margin-top:0.8em;color:#e03f3f;font-weight:600;" id="authError"></div>
+    <div class="error-msg" id="authError"></div>
   </div>
   <div id="signupSection" class="auth-section" style="display:none;">
     <h2>Create Account</h2>
@@ -259,42 +405,46 @@
     <input type="password" id="signupPassword" placeholder="Password" autocomplete="new-password">
     <button class="button" id="signupBtn">Sign Up</button>
     <button class="button secondary" id="switchToLoginBtn">Back to Login</button>
-    <div style="margin-top:0.8em;color:#e03f3f;font-weight:600;" id="signupError"></div>
+    <div class="error-msg" id="signupError"></div>
   </div>
   <main id="mainApp" style="display:none;">
-    <div class="table-wrapper">
-      <h2 style="margin-top:1em;">Current Month Bills</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Paid</th>
-            <th>Bill Name</th>
-            <th>Due Date</th>
-            <th>Amount ($)</th>
-            <th>Date Added</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="currentBillsBody"></tbody>
-      </table>
-      <div id="totalCurrent" style="text-align:right;font-weight:600;padding:0.7em 1.2em 0.7em 0;"></div>
-    </div>
-    <button class="add-bill-btn" id="addBillBtn" title="Add Bill">+</button>
-    <div class="table-wrapper">
-      <h2 style="margin-top:1em;">Next Month Bills</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Bill Name</th>
-            <th>Due Date</th>
-            <th>Amount ($)</th>
-            <th>Date Added</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="nextBillsBody"></tbody>
-      </table>
-      <div id="totalNext" style="text-align:right;font-weight:600;padding:0.7em 1.2em 0.7em 0;"></div>
+    <div class="bill-lists-container">
+      <div class="bill-list">
+        <h2>Current Month Bills</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Paid</th>
+              <th>Bill Name</th>
+              <th>Due Date</th>
+              <th>Amount ($)</th>
+              <th>Date Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="currentBillsBody"></tbody>
+        </table>
+        <div id="totalCurrent" style="text-align:right;font-weight:600;padding:0.7em 1.2em 0.7em 0;"></div>
+      </div>
+      <div>
+        <button class="add-bill-btn" id="addBillBtn" title="Add Bill">+</button>
+      </div>
+      <div class="bill-list">
+        <h2>Next Month Bills</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Bill Name</th>
+              <th>Due Date</th>
+              <th>Amount ($)</th>
+              <th>Date Added</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="nextBillsBody"></tbody>
+        </table>
+        <div id="totalNext" style="text-align:right;font-weight:600;padding:0.7em 1.2em 0.7em 0;"></div>
+      </div>
     </div>
   </main>
   <!-- Popup for add/edit -->
@@ -309,62 +459,29 @@
     </div>
   </div>
   <script>
-    const API_URL = 'https://mbtback.onrender.com'; // CHANGE THIS to your backend!
-    const backendStatusBar = document.getElementById('backendStatusBar');
-    const backendStatusMsg = document.getElementById('backendStatusMsg');
-    const backendStatusIcon = document.getElementById('backendStatusIcon');
-    let backendReady = false;
-    let backendAttempts = 0;
-    function checkBackend() {
-      backendAttempts++;
-      backendStatusMsg.innerText = backendAttempts === 1
-        ? "Checking backend status..."
-        : `Backend sleeping, trying to wake up (attempt ${backendAttempts})...`;
-      backendStatusIcon.innerText = "🔄";
-      fetch(API_URL + "/", { method: "GET", cache: "no-store" })
-        .then(async r => {
-          if (r.ok) {
-            backendReady = true;
-            if (!sessionStorage.getItem('backendJustReloaded')) {
-              sessionStorage.setItem('backendJustReloaded', '1');
-              backendStatusMsg.innerText = "Backend is ready! Reloading...";
-              backendStatusIcon.innerText = "✅";
-              setTimeout(() => {
-                location.reload();
-              }, 900);
-            } else {
-              sessionStorage.removeItem('backendJustReloaded');
-              backendStatusIcon.innerText = "✅";
-              backendStatusMsg.innerText = "Backend is ready!";
-              setTimeout(() => {
-                backendStatusBar.style.display = "none";
-                startApp();
-              }, 700);
-            }
-          } else throw new Error();
-        })
-        .catch(err => {
-          backendReady = false;
-          backendStatusIcon.innerText = "💤";
-          backendStatusMsg.innerText = "Backend is asleep or offline. Retrying in 4s...";
-          setTimeout(() => checkBackend(), 4000);
-        });
-    }
+    // --- CONFIG: set to your backend ---
+    const API_URL = 'https://bills-backend.onrender.com'; // CHANGE THIS to your backend
+
     let auth = { token: null, username: null };
     let currentBills = [];
     let nextBills = [];
     let editingData = { list: null, idx: null, id: null };
+
+    // --- Auth UI ---
     const $authSection    = document.getElementById('authSection');
     const $signupSection  = document.getElementById('signupSection');
     const $mainApp        = document.getElementById('mainApp');
     const $authStatusBar  = document.getElementById('authStatusBar');
     const $authWelcome    = document.getElementById('authWelcome');
     const $logoutBtn      = document.getElementById('logoutBtn');
+    const $topControls    = document.getElementById('topControls');
+
     function showLogin() {
       $authSection.style.display = 'block';
       $signupSection.style.display = 'none';
       $mainApp.style.display = 'none';
       $authStatusBar.style.display = 'none';
+      $logoutBtn.style.display = 'none';
       document.getElementById('authTitle').innerText = 'Login';
       document.getElementById('authError').innerText = '';
       document.getElementById('authUsername').value = '';
@@ -375,6 +492,7 @@
       $authSection.style.display = 'none';
       $mainApp.style.display = 'none';
       $authStatusBar.style.display = 'none';
+      $logoutBtn.style.display = 'none';
       document.getElementById('signupError').innerText = '';
       document.getElementById('signupUsername').value = '';
       document.getElementById('signupPassword').value = '';
@@ -385,6 +503,7 @@
       $mainApp.style.display = '';
       $authStatusBar.style.display = 'flex';
       $authWelcome.innerText = `Logged in as ${auth.username}`;
+      $logoutBtn.style.display = 'inline-block';
     }
     document.getElementById('loginBtn').onclick = async () => {
       const username = document.getElementById('authUsername').value;
@@ -431,6 +550,7 @@
       auth = {token:null, username:null};
       showLogin();
     };
+
     async function loadBills() {
       if (!auth.token) return;
       const r = await fetch(API_URL+'/api/load', {
@@ -470,7 +590,6 @@
       document.getElementById('popup').style.display = 'none';
       editingData = { list:null, idx:null, id:null };
     }
-    // --- Bill CRUD ---
     function getBillFormData() {
       return {
         name: document.getElementById('billName').value.trim(),
@@ -548,20 +667,20 @@
         paidTd.appendChild(checkbox);
         tr.appendChild(paidTd);
         // Name
-        let nameTd = document.createElement('td'); nameTd.textContent = bill.name; tr.appendChild(nameTd);
+        let nameTd = document.createElement('td'); nameTd.textContent = bill.name || ""; tr.appendChild(nameTd);
         // Due Date
         let dueTd = document.createElement('td');
         dueTd.textContent = formatDateToMMDDYYYY(bill.dueDate);
         tr.appendChild(dueTd);
         // Amount
-        let amtTd = document.createElement('td'); amtTd.textContent = bill.amountDue.toFixed(2); tr.appendChild(amtTd);
+        let amtTd = document.createElement('td'); amtTd.textContent = (bill.amountDue||0).toFixed(2); tr.appendChild(amtTd);
         // Date Added
         let dateTd = document.createElement('td'); dateTd.textContent = formatDateTime(bill.dateAdded); tr.appendChild(dateTd);
         // Actions
         let actionsTd = document.createElement('td');
         actionsTd.innerHTML =
-          `<button class="action-btn" onclick="editBill('current',${idx},currentBills[${idx}])">Edit</button>
-           <button class="action-btn" onclick="deleteBill('current',${idx})">Delete</button>`;
+          `<button class="action-btn secondary" onclick="editBill('current',${idx},currentBills[${idx}])">Edit</button>
+           <button class="action-btn danger" onclick="deleteBill('current',${idx})">Delete</button>`;
         tr.appendChild(actionsTd);
         tbody.appendChild(tr);
       });
@@ -579,14 +698,14 @@
       }
       nextBills.forEach((bill, idx) => {
         const tr = document.createElement('tr');
-        let nameTd = document.createElement('td'); nameTd.textContent = bill.name; tr.appendChild(nameTd);
+        let nameTd = document.createElement('td'); nameTd.textContent = bill.name || ""; tr.appendChild(nameTd);
         let dueTd = document.createElement('td'); dueTd.textContent = formatDateToMMDDYYYY(bill.dueDate); tr.appendChild(dueTd);
-        let amtTd = document.createElement('td'); amtTd.textContent = bill.amountDue.toFixed(2); tr.appendChild(amtTd);
+        let amtTd = document.createElement('td'); amtTd.textContent = (bill.amountDue||0).toFixed(2); tr.appendChild(amtTd);
         let dateTd = document.createElement('td'); dateTd.textContent = formatDateTime(bill.dateAdded); tr.appendChild(dateTd);
         let actionsTd = document.createElement('td');
         actionsTd.innerHTML =
-          `<button class="action-btn" onclick="editBill('next',${idx},nextBills[${idx}])">Edit</button>
-           <button class="action-btn" onclick="deleteBill('next',${idx})">Delete</button>`;
+          `<button class="action-btn secondary" onclick="editBill('next',${idx},nextBills[${idx}])">Edit</button>
+           <button class="action-btn danger" onclick="deleteBill('next',${idx})">Delete</button>`;
         tr.appendChild(actionsTd);
         tbody2.appendChild(tr);
       });
@@ -625,21 +744,18 @@
     const darkToggle = document.getElementById('darkToggle');
     const sunIcon = document.getElementById('sunIcon');
     const moonIcon = document.getElementById('moonIcon');
-    const darkToggleText = document.getElementById('darkToggleText');
     function setDarkMode(enabled) {
       if (enabled) {
         document.body.classList.add('dark');
         darkToggle.classList.add('active');
         sunIcon.style.display = 'none';
         moonIcon.style.display = 'inline';
-        darkToggleText.innerText = "Light Mode";
         localStorage.setItem('darkMode', '1');
       } else {
         document.body.classList.remove('dark');
         darkToggle.classList.remove('active');
         sunIcon.style.display = 'inline';
         moonIcon.style.display = 'none';
-        darkToggleText.innerText = "Dark Mode";
         localStorage.removeItem('darkMode');
       }
     }
@@ -654,14 +770,6 @@
     window.closePopup = closePopup;
 
     window.onload = () => {
-      backendStatusBar.style.display = "flex";
-      $authSection.style.display = "none";
-      $signupSection.style.display = "none";
-      $mainApp.style.display = "none";
-      $authStatusBar.style.display = "none";
-      checkBackend();
-    };
-    function startApp() {
       const saved = localStorage.getItem('auth');
       if (saved) {
         auth = JSON.parse(saved);
@@ -670,7 +778,7 @@
       } else {
         showLogin();
       }
-    }
+    };
   </script>
 </body>
 </html>
