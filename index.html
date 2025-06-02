@@ -27,19 +27,26 @@
       --dark-chip: #34345c;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html {
+    html, body {
+      height: 100%;
       min-height: 100%;
       background: var(--secondary);
+      /* Prevent overscroll on iOS Safari */
+      overscroll-behavior: none;
     }
     body {
       font-family: 'Inter', Arial, sans-serif;
       background: var(--secondary);
       color: #222;
       min-height: 100vh;
+      height: 100%;
       padding: 0 0 4em 0;
       transition: background var(--transition), color var(--transition);
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
+      /* Enable vertical scrolling */
+      overflow-y: auto;
+      overflow-x: hidden;
     }
     body.dark {
       background: var(--dark-bg);
@@ -364,6 +371,7 @@
       justify-content: center; align-items: center;
       padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
       box-sizing: border-box;
+      overflow: auto;
     }
     .popup-content {
       background: #fff; border-radius: var(--radius); max-width: 350px; width: 96vw; padding: 2em 1.2em 1.4em 1.2em;
