@@ -25,13 +25,14 @@
       --dark-secondary: #27273a;
       --dark-border: #39395a;
       --dark-chip: #34345c;
+      --sortable-hover: #dbeafe;
+      --sortable-active: #2563eb;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html, body {
       height: 100%;
       min-height: 100%;
       background: var(--secondary);
-      /* Prevent overscroll on iOS Safari */
       overscroll-behavior: none;
     }
     body {
@@ -44,7 +45,6 @@
       transition: background var(--transition), color var(--transition);
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
-      /* Enable vertical scrolling */
       overflow-y: auto;
       overflow-x: hidden;
     }
@@ -331,6 +331,33 @@
     }
     body.dark .empty-row td { background: var(--dark-secondary); color: #999fc8;}
 
+    /* Sortable Table Headers */
+    .sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      transition: background var(--transition), color var(--transition);
+    }
+    .sortable:hover, .sortable.sorted {
+      background: var(--sortable-hover);
+      color: var(--primary-hover);
+    }
+    body.dark .sortable:hover, body.dark .sortable.sorted {
+      background: #23395a;
+      color: #9dc3fd;
+    }
+    .sort-arrow {
+      font-size: 0.8em;
+      margin-left: 0.2em;
+      color: var(--sortable-active);
+      transition: color var(--transition);
+      position: relative;
+      top: -1px;
+    }
+    body.dark .sort-arrow {
+      color: #99b7ff;
+    }
+
     /* Action Buttons */
     .action-btn {
       padding: 0.28em 0.7em;
@@ -427,7 +454,6 @@
       }
       .bottom-controls { right: 0.7em; bottom: 0.7em;}
     }
-    /* iPhone XR, 11, 12, 13, 14, Galaxy S20, S21, and similar - fix for safe area/inset and width */
     @media (max-width: 430px) {
       html, body {
         font-size: 14px;
@@ -508,10 +534,10 @@
           <thead>
             <tr>
               <th>Paid</th>
-              <th>Bill Name</th>
-              <th>Due Date</th>
-              <th>Amount ($)</th>
-              <th>Date Added</th>
+              <th class="sortable" data-list="current" data-key="name">Bill Name <span class="sort-arrow" id="sort-arrow-current-name"></span></th>
+              <th class="sortable" data-list="current" data-key="dueDate">Due Date <span class="sort-arrow" id="sort-arrow-current-dueDate"></span></th>
+              <th class="sortable" data-list="current" data-key="amountDue">Amount ($) <span class="sort-arrow" id="sort-arrow-current-amountDue"></span></th>
+              <th class="sortable" data-list="current" data-key="dateAdded">Date Added <span class="sort-arrow" id="sort-arrow-current-dateAdded"></span></th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -527,10 +553,10 @@
         <table>
           <thead>
             <tr>
-              <th>Bill Name</th>
-              <th>Due Date</th>
-              <th>Amount ($)</th>
-              <th>Date Added</th>
+              <th class="sortable" data-list="next" data-key="name">Bill Name <span class="sort-arrow" id="sort-arrow-next-name"></span></th>
+              <th class="sortable" data-list="next" data-key="dueDate">Due Date <span class="sort-arrow" id="sort-arrow-next-dueDate"></span></th>
+              <th class="sortable" data-list="next" data-key="amountDue">Amount ($) <span class="sort-arrow" id="sort-arrow-next-amountDue"></span></th>
+              <th class="sortable" data-list="next" data-key="dateAdded">Date Added <span class="sort-arrow" id="sort-arrow-next-dateAdded"></span></th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -559,6 +585,12 @@
     let currentBills = [];
     let nextBills = [];
     let editingData = { list: null, idx: null, id: null };
+
+    // Sorting state
+    let sortState = {
+      current: { key: '', dir: 'asc' },
+      next:    { key: '', dir: 'asc' }
+    };
 
     // --- Auth UI ---
     const $authSection    = document.getElementById('authSection');
@@ -735,12 +767,85 @@
       saveBills();
       renderBills();
     }
+
+    // --- Sorting ---
+    function sortBills(bills, key, dir) {
+      // Copy array to not mutate original
+      let sorted = bills.slice();
+      sorted.sort((a, b) => {
+        let va, vb;
+        if (key === "name") {
+          va = (a.name || '').toLowerCase();
+          vb = (b.name || '').toLowerCase();
+          if (va < vb) return dir === 'asc' ? -1 : 1;
+          if (va > vb) return dir === 'asc' ? 1 : -1;
+          return 0;
+        } else if (key === "dueDate" || key === "dateAdded") {
+          va = new Date(a[key] || 0).getTime();
+          vb = new Date(b[key] || 0).getTime();
+          if (va < vb) return dir === 'asc' ? -1 : 1;
+          if (va > vb) return dir === 'asc' ? 1 : -1;
+          return 0;
+        } else if (key === "amountDue") {
+          va = Number(a.amountDue) || 0;
+          vb = Number(b.amountDue) || 0;
+          if (va < vb) return dir === 'asc' ? -1 : 1;
+          if (va > vb) return dir === 'asc' ? 1 : -1;
+          return 0;
+        }
+        return 0;
+      });
+      return sorted;
+    }
+
+    function setSort(list, key) {
+      // Toggle direction if same key, else default to ascending
+      if (sortState[list].key === key) {
+        sortState[list].dir = (sortState[list].dir === 'asc') ? 'desc' : 'asc';
+      } else {
+        sortState[list].key = key;
+        sortState[list].dir = 'asc';
+      }
+      renderBills();
+    }
+
+    function updateSortArrows() {
+      // Update header arrows and highlight
+      const sortables = document.querySelectorAll('.sortable');
+      sortables.forEach(th => {
+        const list = th.getAttribute('data-list');
+        const key  = th.getAttribute('data-key');
+        const arrowSpan = th.querySelector('.sort-arrow');
+        th.classList.remove('sorted');
+        arrowSpan.textContent = '';
+        if (sortState[list].key === key) {
+          th.classList.add('sorted');
+          arrowSpan.textContent = sortState[list].dir === 'asc' ? '▲' : '▼';
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Add click listeners to sortable headers
+      document.querySelectorAll('.sortable').forEach(th => {
+        th.addEventListener('click', function() {
+          setSort(this.getAttribute('data-list'), this.getAttribute('data-key'));
+        });
+      });
+    });
+
     // --- Render Bills ---
     function renderBills() {
-      // Current
+      updateSortArrows();
+
+      // Render Current
       const tbody = document.getElementById('currentBillsBody');
       tbody.innerHTML = '';
-      if (!currentBills.length) {
+      let current = currentBills.slice();
+      if (sortState.current.key) {
+        current = sortBills(current, sortState.current.key, sortState.current.dir);
+      }
+      if (!current.length) {
         let tr = document.createElement('tr');
         tr.className = 'empty-row';
         let td = document.createElement('td');
@@ -749,14 +854,14 @@
         tr.appendChild(td);
         tbody.appendChild(tr);
       }
-      currentBills.forEach((bill, idx) => {
+      current.forEach((bill, idx) => {
         const tr = document.createElement('tr');
         // Paid checkbox
         const paidTd = document.createElement('td');
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.title = "Mark as paid";
-        checkbox.addEventListener('change', () => markBillPaid(idx));
+        checkbox.addEventListener('change', () => markBillPaid(currentBills.indexOf(bill)));
         paidTd.appendChild(checkbox);
         tr.appendChild(paidTd);
         // Name
@@ -772,15 +877,20 @@
         // Actions
         let actionsTd = document.createElement('td');
         actionsTd.innerHTML =
-          `<button class="action-btn secondary" onclick="editBill('current',${idx},currentBills[${idx}])">Edit</button>
-           <button class="action-btn danger" onclick="deleteBill('current',${idx})">Delete</button>`;
+          `<button class="action-btn secondary" onclick="editBill('current',${currentBills.indexOf(bill)},currentBills[${currentBills.indexOf(bill)}])">Edit</button>
+           <button class="action-btn danger" onclick="deleteBill('current',${currentBills.indexOf(bill)})">Delete</button>`;
         tr.appendChild(actionsTd);
         tbody.appendChild(tr);
       });
-      // Next
+
+      // Render Next
       const tbody2 = document.getElementById('nextBillsBody');
       tbody2.innerHTML = '';
-      if (!nextBills.length) {
+      let next = nextBills.slice();
+      if (sortState.next.key) {
+        next = sortBills(next, sortState.next.key, sortState.next.dir);
+      }
+      if (!next.length) {
         let tr = document.createElement('tr');
         tr.className = 'empty-row';
         let td = document.createElement('td');
@@ -789,7 +899,7 @@
         tr.appendChild(td);
         tbody2.appendChild(tr);
       }
-      nextBills.forEach((bill, idx) => {
+      next.forEach((bill, idx) => {
         const tr = document.createElement('tr');
         let nameTd = document.createElement('td'); nameTd.textContent = bill.name || ""; tr.appendChild(nameTd);
         let dueTd = document.createElement('td'); dueTd.textContent = formatDateToMMDDYYYY(bill.dueDate); tr.appendChild(dueTd);
@@ -797,11 +907,12 @@
         let dateTd = document.createElement('td'); dateTd.textContent = formatDateTime(bill.dateAdded); tr.appendChild(dateTd);
         let actionsTd = document.createElement('td');
         actionsTd.innerHTML =
-          `<button class="action-btn secondary" onclick="editBill('next',${idx},nextBills[${idx}])">Edit</button>
-           <button class="action-btn danger" onclick="deleteBill('next',${idx})">Delete</button>`;
+          `<button class="action-btn secondary" onclick="editBill('next',${nextBills.indexOf(bill)},nextBills[${nextBills.indexOf(bill)}])">Edit</button>
+           <button class="action-btn danger" onclick="deleteBill('next',${nextBills.indexOf(bill)})">Delete</button>`;
         tr.appendChild(actionsTd);
         tbody2.appendChild(tr);
       });
+
       // Totals
       document.getElementById('totalCurrent').textContent = "Total (Current Month): $" + currentBills.reduce((a,b) => a + (b.amountDue||0),0).toFixed(2);
       document.getElementById('totalNext').textContent = "Total (Next Month): $" + nextBills.reduce((a,b) => a + (b.amountDue||0),0).toFixed(2);
