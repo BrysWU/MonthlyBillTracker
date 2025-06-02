@@ -65,7 +65,7 @@
     body.dark .subtitle { color: #bcbcf7; }
     h2 { font-size: 1.3rem; }
     main {
-      max-width: 1200px;
+      max-width: 1500px;
       margin: 2em auto 0 auto;
       padding: 2.5em 1.5em 1.5em 1.5em;
       background: #fff;
@@ -82,7 +82,7 @@
       background: var(--dark-card);
       box-shadow: 0 6px 40px #0004;
     }
-    
+
     /* Bottom-right controls */
     .bottom-controls {
       position: fixed;
@@ -223,9 +223,9 @@
       flex-wrap: wrap;
     }
     .bill-list {
-      flex: 1 1 400px;
-      min-width: 340px;
-      max-width: 520px;
+      flex: 1 1 48%;
+      min-width: 520px;
+      max-width: 700px;
       background: #f8fafc;
       border-radius: var(--radius);
       box-shadow: 0 2px 8px #0001;
@@ -247,17 +247,25 @@
       font-weight: 700;
     }
     body.dark .bill-list h2 { color: #99b7ff; }
+    .bill-list table {
+      table-layout: fixed;
+      width: 100%;
+    }
+    .bill-list th, .bill-list td {
+      word-break: break-word;
+      white-space: normal;
+    }
 
     /* Add Bill Button */
     .add-bill-btn {
-      margin: 0 auto 1em auto;
+      margin: 1.5em auto 1em auto;
       display: block;
       background: var(--primary);
       color: #fff;
       font-size: 2em;
       border-radius: 50%;
-      width: 52px;
-      height: 52px;
+      width: 56px;
+      height: 56px;
       border: none;
       box-shadow: 0 3px 10px #2563eb2a;
       cursor: pointer;
@@ -276,7 +284,7 @@
       transition: background var(--transition);
     }
     th, td {
-      padding: 0.7em 0.8em;
+      padding: 0.7em 0.6em;
       border-bottom: 1px solid var(--border);
       text-align: left;
       transition: background var(--transition), color var(--transition), border var(--transition);
@@ -354,7 +362,12 @@
     .popup-content .button { width: 100%; margin-top: 1em;}
     .popup-content .close-popup { position: absolute; right: 1.1em; top: 1.1em; background: none; border: none; font-size: 1.3em; color: #888; cursor: pointer;}
     .popup-content .close-popup:hover { color: #e03f3f;}
+
     /* Responsive */
+    @media (max-width: 1500px) {
+      main { max-width: 99vw; }
+      .bill-list { min-width: 450px; max-width: 900px; }
+    }
     @media (max-width: 1100px) {
       .bill-lists-container { flex-direction: column; align-items: stretch; gap: 1.6em;}
       .bill-list { min-width: 0; max-width: 100%; }
