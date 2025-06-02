@@ -92,6 +92,16 @@
       display: flex;
       gap: 1em;
     }
+    
+    /* Bottom-right controls */
+    .bottom-controls {
+      position: fixed;
+      bottom: 1.5em;
+      right: 2em;
+      z-index: 10;
+      display: flex;
+      gap: 1em;
+    }
 
     /* Dark Mode Button */
     .dark-toggle-btn {
@@ -385,6 +395,14 @@
     <button class="logout-btn" id="logoutBtn" style="display:none;">Logout</button>
   </div>
 
+  <!-- Bottom-Right Controls -->
+  <div class="bottom-controls" id="bottomControls" style="display: flex;">
+    <button class="dark-toggle-btn" id="darkToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <svg id="sunIcon" style="display:inline;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><circle cx="12" cy="12" r="5"/><g stroke-width="2"><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/></g></svg>
+      <svg id="moonIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 1 0 9.79 9.79z"/></svg>
+    </button>
+  </div>
+
   <div id="authStatusBar" class="auth-status-bar" style="display:none;">
     <span id="authWelcome"></span>
   </div>
@@ -460,7 +478,7 @@
   </div>
   <script>
     // --- CONFIG: set to your backend ---
-    const API_URL = 'https://bills-backend.onrender.com'; // CHANGE THIS to your backend
+    const API_URL = 'https://mbtback.onrender.com'; // CHANGE THIS to your backend
 
     let auth = { token: null, username: null };
     let currentBills = [];
