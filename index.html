@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Monthly Bill Tracker</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <!-- Star Background -->
@@ -27,6 +27,10 @@
       --dark-chip: #34345c;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      min-height: 100%;
+      background: var(--secondary);
+    }
     body {
       font-family: 'Inter', Arial, sans-serif;
       background: var(--secondary);
@@ -35,6 +39,8 @@
       padding: 0 0 4em 0;
       transition: background var(--transition), color var(--transition);
       overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
     body.dark {
       background: var(--dark-bg);
@@ -44,6 +50,7 @@
       position: fixed;
       width: 100vw; height: 100vh; left: 0; top: 0;
       z-index: -1; overflow: hidden;
+      pointer-events: none;
     }
     h1, h2 {
       text-align: center;
@@ -65,7 +72,7 @@
     body.dark .subtitle { color: #bcbcf7; }
     h2 { font-size: 1.3rem; }
     main {
-      max-width: 75vw;
+      max-width: 1500px;
       margin: 2em auto 0 auto;
       padding: 2.5em 1.5em 1.5em 1.5em;
       background: #fff;
@@ -91,6 +98,7 @@
       z-index: 10;
       display: flex;
       gap: 1em;
+      pointer-events: auto;
     }
 
     /* Dark Mode Button */
@@ -108,6 +116,7 @@
       cursor: pointer;
       box-shadow: 0 2px 10px #2563eb18;
       transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+      touch-action: manipulation;
     }
     .dark-toggle-btn.active {
       background: #222;
@@ -120,6 +129,7 @@
     }
     .dark-toggle-btn svg {
       width: 1.2em; height: 1.2em;
+      pointer-events: none;
     }
     .logout-btn {
       background: var(--danger);
@@ -136,8 +146,9 @@
       margin-left: 0.7em;
       margin-right: 0.1em;
       margin-top: 0;
+      touch-action: manipulation;
     }
-    .logout-btn:hover {
+    .logout-btn:hover, .logout-btn:active {
       background: var(--danger-hover);
       color: #fff;
     }
@@ -157,7 +168,7 @@
 
     /* Auth section (login/signup) */
     .auth-section {
-      max-width: 350px;
+      max-width: 430px;
       margin: 2em auto 2em auto;
       background: #f8fafc;
       border-radius: var(--radius);
@@ -172,6 +183,7 @@
       width: 100%; padding: 0.7em 1em; margin-bottom: 1em;
       border: 1.5px solid var(--border); border-radius: 7px; font-size: 1rem;
       background: #fff; transition: border var(--transition), background var(--transition), color var(--transition);
+      font-size: 1.08em;
     }
     body.dark .auth-section input[type="text"], body.dark .auth-section input[type="password"] {
       background: var(--dark-secondary); border: 1.5px solid var(--dark-border); color: var(--dark-text);
@@ -186,7 +198,7 @@
       border: none;
       border-radius: 7px;
       padding: 0.7em 1.2em;
-      font-size: 1.06em;
+      font-size: 1.09em;
       font-family: inherit;
       font-weight: 600;
       cursor: pointer;
@@ -201,14 +213,15 @@
       box-shadow: none;
       margin-top: 0;
     }
-    .auth-section .button:hover { background: var(--primary-hover); color: #fff;}
-    .auth-section .button.secondary:hover { background: var(--primary); color: #fff;}
+    .auth-section .button:hover, .auth-section .button:active { background: var(--primary-hover); color: #fff;}
+    .auth-section .button.secondary:hover, .auth-section .button.secondary:active { background: var(--primary); color: #fff;}
     .auth-section .error-msg {
       color: var(--danger);
       margin-top: 0.7em;
       font-weight: 600;
       min-height: 1.5em;
       text-align: center;
+      font-size: 1.03em;
     }
 
     /* Bills layout */
@@ -224,8 +237,8 @@
     }
     .bill-list {
       flex: 1 1 45%;
-      min-width: 520px;
-      max-width: 70vw;
+      min-width: 320px;
+      max-width: 700px;
       background: #f8fafc;
       border-radius: var(--radius);
       box-shadow: 0 2px 8px #0001;
@@ -270,8 +283,9 @@
       box-shadow: 0 3px 10px #2563eb2a;
       cursor: pointer;
       transition: background var(--transition), transform var(--transition);
+      touch-action: manipulation;
     }
-    .add-bill-btn:hover { background: var(--primary-hover); transform: scale(1.08);}
+    .add-bill-btn:hover, .add-bill-btn:active { background: var(--primary-hover); transform: scale(1.08);}
 
     /* Table Styles */
     table {
@@ -324,6 +338,7 @@
       border: none;
       box-shadow: 0 2px 8px #2563eb12;
       transition: background 0.18s, transform 0.15s;
+      touch-action: manipulation;
     }
     .action-btn:active { transform: scale(0.97);}
     .action-btn.secondary {
@@ -337,9 +352,9 @@
       color: #fff;
       border: none;
     }
-    .action-btn:hover { background: var(--primary-hover);}
-    .action-btn.danger:hover { background: var(--danger-hover);}
-    .action-btn.secondary:hover { background: var(--primary); color: #fff;}
+    .action-btn:hover, .action-btn:active { background: var(--primary-hover);}
+    .action-btn.danger:hover, .action-btn.danger:active { background: var(--danger-hover);}
+    .action-btn.secondary:hover, .action-btn.secondary:active { background: var(--primary); color: #fff;}
 
     /* Popup Styles */
     .popup {
@@ -348,6 +363,8 @@
       top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(0,0,0,0.63); z-index: 99;
       justify-content: center; align-items: center;
+      padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+      box-sizing: border-box;
     }
     .popup-content {
       background: #fff; border-radius: var(--radius); max-width: 350px; width: 96vw; padding: 2em 1.2em 1.4em 1.2em;
@@ -361,23 +378,62 @@
     body.dark .popup-content input { background: var(--dark-card); border: 1.5px solid var(--dark-border); color: var(--dark-text);}
     .popup-content .button { width: 100%; margin-top: 1em;}
     .popup-content .close-popup { position: absolute; right: 1.1em; top: 1.1em; background: none; border: none; font-size: 1.3em; color: #888; cursor: pointer;}
-    .popup-content .close-popup:hover { color: #e03f3f;}
+    .popup-content .close-popup:hover, .popup-content .close-popup:active { color: #e03f3f;}
 
-    /* Responsive */
-    @media (max-width: 1500px) {
-      main { max-width: 99vw; }
-      .bill-list { min-width: 450px; max-width: 900px; }
-    }
+    /* Mobile Support and Responsive */
     @media (max-width: 1100px) {
+      main { max-width: 100vw; }
       .bill-lists-container { flex-direction: column; align-items: stretch; gap: 1.6em;}
-      .bill-list { min-width: 0; max-width: 100%; }
+      .bill-list { min-width: 0; max-width: 100vw; }
     }
     @media (max-width: 700px) {
-      main { padding: 1em 0.1em 1em 0.1em; }
+      html, body {
+        font-size: 16px;
+        padding: 0;
+        margin: 0;
+        min-width: 0;
+        min-height: 100vh;
+      }
+      main { 
+        padding: 0.7em 0.1em 0.7em 0.1em; 
+        max-width: 100vw;
+        min-width: 0;
+      }
       .auth-section { max-width: 100%; }
-      .bill-lists-container { flex-direction: column; gap: 0.9em;}
-      .bill-list { min-width: 0; }
-      th, td { padding: 0.7em 0.5em; font-size: 0.97em; }
+      .bill-lists-container { flex-direction: column; gap: 0.7em; width: 100vw; }
+      .bill-list {
+        min-width: 0;
+        max-width: 98vw;
+        padding: 0.6em 0.3em 1em 0.3em;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      th, td { padding: 0.54em 0.29em; font-size: 0.97em; }
+      .add-bill-btn { width: 46px; height: 46px; font-size: 1.5em; }
+      .bottom-controls { right: 0.7em; bottom: 0.7em;}
+    }
+    /* iPhone XR, 11, 12, 13, 14, Galaxy S20, S21, and similar - fix for safe area/inset and width */
+    @media (max-width: 430px) {
+      html, body {
+        font-size: 16px;
+        width: 100vw;
+        min-width: 0;
+        padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+      }
+      main {
+        max-width: 100vw;
+        min-width: 0;
+        padding: 0.6em 0.07em 0.6em 0.07em;
+      }
+      .bill-list {
+        max-width: 99vw;
+        min-width: 0;
+        padding: 0.35em 0.05em 0.8em 0.05em;
+      }
+      .bill-lists-container { gap: 0.4em; }
+      th, td { font-size: 0.95em; }
+      .add-bill-btn { width: 40px; height: 40px; font-size: 1.2em; }
+      .bottom-controls { right: 0.2em; bottom: 0.2em;}
     }
   </style>
 </head>
